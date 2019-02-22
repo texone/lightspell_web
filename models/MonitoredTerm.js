@@ -14,7 +14,6 @@ var MonitoredTermSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 MonitoredTermSchema.plugin(uniqueValidator, {message: 'is already taken'});
-MonitoredTermSchema.plugin(autoIncrement.plugin, 'MonitoredTerm');
 
 MonitoredTermSchema.methods.toJSONFor = function(user){
     return {
@@ -25,6 +24,19 @@ MonitoredTermSchema.methods.toJSONFor = function(user){
         createdAt: this.createdAt,
         updatedAt: this.updatedAt
     };
+};
+
+MonitoredTermSchema.methods.addTerm = function(id){
+    if(this.terms.indexOf(id) === -1){
+        this.terms.push(id);
+    }
+
+    return this.save();
+};
+
+MonitoredTermSchema.methods.removeTerm = function(id){
+    this.terms.remove( id );
+    return this.save();
 };
 
 mongoose.model('MonitoredTerm', MonitoredTermSchema);

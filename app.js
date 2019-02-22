@@ -40,9 +40,10 @@ if(isProduction){
   mongoose.set('debug', true);
 }
 
-autoIncrement.initialize(connection);
+//autoIncrement.initialize(connection);
 
 require('./models/User');
+require('./models/Entry');
 require('./models/Term');
 require('./models/MonitoredTerm');
 require('./config/passport');

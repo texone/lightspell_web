@@ -3,6 +3,7 @@ var router = require('express').Router();
 router.use('/', require('./users'));
 router.use('/profiles', require('./profiles'));
 router.use('/terms', require('./terms'));
+router.use('/entries', require('./entries'));
 router.use('/monitoredTerms', require('./monitoredTerms'));
 
 router.use(function(err, req, res, next){
