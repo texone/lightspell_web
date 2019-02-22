@@ -9,6 +9,7 @@ var fs = require('fs'),
     passport = require('passport'),
     errorhandler = require('errorhandler'),
     mongoose = require('mongoose');
+    autoIncrement = require('mongoose-auto-increment');
 
 var isProduction = process.env.NODE_ENV === 'production';
 
@@ -31,14 +32,19 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
+var connection;
 if(isProduction){
-  mongoose.connect(process.env.MONGODB_URI);
+  connection = mongoose.connect(process.env.MONGODB_URI);
 } else {
-  mongoose.connect('mongodb://localhost/conduit');
+  connection = mongoose.connect('mongodb://localhost/conduit');
   mongoose.set('debug', true);
 }
 
+autoIncrement.initialize(connection);
+
 require('./models/User');
+require('./models/Term');
+require('./models/MonitoredTerm');
 require('./config/passport');
 
 app.use(require('./routes'));
