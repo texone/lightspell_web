@@ -9,18 +9,18 @@ var UserSchema = new mongoose.Schema({
   email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
   name: String,
   firstName: String,
-  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }],
-  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  blocks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Block' }],
+  marks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Entry' }],
   hash: String,
   salt: String
 }, {timestamps: true});
 
-UserSchema.methods.toProfileJSONFor = function(user){
+UserSchema.methods.toJSON = function(){
   return {
     username: this.username,
     name: this.name,
-    firstName: this.firstName || 'https://static.productionready.io/images/smiley-cyrus.jpg',
-    following:  false  // we'll implement following functionality in a few chapters :)
+    firstName: this.firstName,
+    markedEntry:  false  // we'll implement following functionality in a few chapters :)
   };
 };
 
@@ -54,6 +54,25 @@ UserSchema.methods.toAuthJSON = function(){
     email: this.email,
     token: this.generateJWT()
   };
+};
+
+UserSchema.methods.mark = function(id){
+  if(this.marks.indexOf(id) === -1){
+    this.marks.push(id);
+  }
+
+  return this.save();
+};
+
+UserSchema.methods.isMark = function(id){
+  return this.marks.some(function(markID){
+    return markID.toString() === id.toString();
+  });
+};
+
+UserSchema.methods.unmark = function(id){
+  this.marks.remove( id );
+  return this.save();
 };
 
 mongoose.model('User', UserSchema);
